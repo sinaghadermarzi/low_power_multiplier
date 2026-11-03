@@ -39,5 +39,15 @@ should exercise, e.g. after fixing the `include` line:
 iverilog -o mult_sim Work-Archive/behv_multiplier_testbench.v && vvp mult_sim
 ```
 
+As committed, the testbenches only drive the inputs (`A = 6`, `B = 10`, reset released after 500 ns) and
+a free-running `always #50` clock: they contain no `$finish`, `$display`, `$monitor` or waveform-dump
+calls, so the command above runs indefinitely and prints nothing. To see the result, add something like
+the following to the testbench's `initial` block (or open it in a GUI simulator and watch `Res`):
+
+```verilog
+$monitor("%t rst=%b A=%d B=%d Res=%d", $time, rst, A, B, Res);
+#5000 $finish;
+```
+
 The netlists need the cell library they were synthesised with, which is not part of the repo; the RTL
 files simulate on their own.
